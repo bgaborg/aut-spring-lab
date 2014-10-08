@@ -65,7 +65,7 @@ public class Phone implements Serializable {
     @Override
     public String toString() {
         return "Phone{" +
-                ", api_key='" + api_key + "'" +
+                " api_key='" + api_key + "'" +
                 ", nickname='" + nickname + "'" +
                 '}';
     }
