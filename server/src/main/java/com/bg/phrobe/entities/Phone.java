@@ -12,14 +12,14 @@ import java.io.Serializable;
  * A Phone.
  */
 @Entity
-@Table(name = "T_PHONE")
-public class Phone implements Serializable {
+public class Phone {
 
     @Id
-    @Column(name = "api_key")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String api_key;
 
-    @Column(name = "nickname")
     private String nickname;
 
     public Phone() {
@@ -28,6 +28,14 @@ public class Phone implements Serializable {
     public Phone(String api, String nick) {
         this.api_key = api;
         this.nickname = nick;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getApi_key() {

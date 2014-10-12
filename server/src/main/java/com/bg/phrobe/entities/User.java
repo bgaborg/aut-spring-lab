@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
- * Created by bg
+ * User
  */
 @Entity
 public class User {
@@ -23,6 +23,14 @@ public class User {
     public User(String u, String p) {
         this.username = u;
         this.password = p;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
