@@ -1,7 +1,9 @@
 package com.bg.phrobe;
 
+import com.bg.phrobe.util.UtilMethods;
 import org.lightadmin.api.config.LightAdmin;
 import org.lightadmin.core.config.LightAdminWebApplicationInitializer;
+import org.lightadmin.core.util.LightAdminConfigurationUtils;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
@@ -9,7 +11,9 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.annotation.Order;
+import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -32,7 +36,8 @@ public class PhrobeBootApplication extends SpringBootServletInitializer {
                 LightAdmin.configure(servletContext)
                         .basePackage("com.bg.phrobe.lightadmin")
                         .baseUrl("/lightadmin")
-                        .security(false);
+                        .securityLogoutUrl("/logout")
+                        .baseUrl("/");
 
                 new LightAdminWebApplicationInitializer().onStartup(servletContext);
             }

@@ -15,7 +15,8 @@
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.thymeleaf" level="WARN"/>
     <logger name="org.apache.catalina" level="INFO"/>
-    <logger name="org.springframework.boot.actuate.audit" level="INFO" />
+    <logger name="org.springframework.boot.actuate.audit" level="INFO"/>
+    <logger name="org.springframework.boot.actuate" level="INFO"/>
 
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>

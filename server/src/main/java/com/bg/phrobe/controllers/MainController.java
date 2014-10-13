@@ -8,7 +8,7 @@ public class MainController {
 
     @RequestMapping("/")
     String home() {
-        return "listPhones";
+        return "redirect:/dash";
     }
 
 }

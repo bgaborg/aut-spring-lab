@@ -36,6 +36,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-security"
     compile("org.springframework.boot:spring-boot-starter-actuator")
 
+    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity3:2.1.1.RELEASE'
+
     compile 'org.hsqldb:hsqldb:2.3.2'
 
     compile "org.lightadmin:lightadmin:$lightadminVersion"
@@ -48,5 +50,9 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test') {
         exclude(module: 'commons-logging')
     }
+}
+
+processResources {
+    expand(project.properties)
 }
 

@@ -37,12 +37,12 @@ public class PhoneController {
     PhoneRepository phoneRepository;
 
     @RequestMapping(value = "/addphone", params = {"api", "nick"})
-    public ModelAndView addPhone(@RequestParam("api") String api, @RequestParam("nick") String nick) {
+    @ResponseBody
+    public String addPhone(@RequestParam("api") String api, @RequestParam("nick") String nick) {
         Phone phone = new Phone(api, nick);
         phoneRepository.save(phone);
-        messages.add("Random phone added: " + phone);
 
-        return listPhone();
+        return "Success.";
     }
 
     @RequestMapping(value = "/addRandomPhone")
@@ -73,10 +73,11 @@ public class PhoneController {
     }
 
     @RequestMapping(value = "/notifyPhone")
-    public ModelAndView notifyPhone(@RequestParam String apiKey) {
+    @ResponseBody
+    public String notifyPhone(@RequestParam String apiKey, @RequestParam String msg) {
         Sender sender = new Sender(PropertiesHolder.GCM_API_KEY);
         Message message = new Message.Builder()
-                .addData("message", "Sent from PhoneController")
+                .addData("message", msg)
                 .build();
         try {
             final Result result = sender.send(message, apiKey, 5);
@@ -87,6 +88,6 @@ public class PhoneController {
             messages.add("Error during sending notification: " + e.getMessage());
         }
 
-        return listPhone();
+        return "Phone notified";
     }
 }

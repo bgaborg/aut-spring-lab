@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -32,7 +33,7 @@ public class PhrobeMainActivity extends Activity {
 
     private static final String TAG = PhrobeMainActivity.class.getName();
 
-    private final String BACKEND_URL = "http://192.168.1.105:8080";
+    private String backendUrl = "http://192.168.1.105:8080";
 
     /**
      * Substitute you own sender ID here. This is the project number you got
@@ -47,12 +48,17 @@ public class PhrobeMainActivity extends Activity {
 
     String regid;
 
+    EditText ipAddrIpText = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_phrobe_main);
+
         mDisplay = (TextView) findViewById(R.id.display);
+
+        ipAddrIpText = (EditText) findViewById(R.id.ip_address);
+        ipAddrIpText.setText(backendUrl, TextView.BufferType.EDITABLE);
 
         context = getApplicationContext();
 
@@ -72,6 +78,7 @@ public class PhrobeMainActivity extends Activity {
     public void onClick(View view) {
         // handle clicks by view id
         if(view.getId() == R.id.register_at_server){
+            backendUrl = ipAddrIpText.getText().toString();
             sendRegistrationIdToBackend(regid);
         }
 
@@ -247,7 +254,7 @@ public class PhrobeMainActivity extends Activity {
     private void sendRegistrationIdToBackend(String rId) {
         String deviceNick = URLEncoder.encode(getPhoneName());
 
-        String getUrl = BACKEND_URL + "/addphone?api=" + rId + "&nick=" + deviceNick;
+        String getUrl = backendUrl + "/addphone?api=" + rId + "&nick=" + deviceNick;
 
         String responseString;
 

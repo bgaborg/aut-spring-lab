@@ -44,7 +44,10 @@ public class SpringSecurityConfigurer extends WebMvcConfigurerAdapter {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().antMatchers("/css/**").permitAll().anyRequest().fullyAuthenticated()
+            http.authorizeRequests()
+                    .antMatchers("/resources/**").permitAll()
+                    .antMatchers("/lightadmin/**").hasRole("ADMIN")
+
                     .and().formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
                     .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
         }
@@ -59,6 +62,7 @@ public class SpringSecurityConfigurer extends WebMvcConfigurerAdapter {
             @Override
             public boolean matches(CharSequence rawPassword, String encodedPassword) {
                 logger.warn("raw: " + rawPassword + " encoded: " + encodedPassword);
+
                 return encodedPassword.equals(Hashing.sha256().hashString(rawPassword, Charsets.UTF_8).toString());
             }
         };
