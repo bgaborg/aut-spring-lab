@@ -2,7 +2,6 @@ package com.bg.phrobe;
 
 import org.lightadmin.api.config.LightAdmin;
 import org.lightadmin.core.config.LightAdminWebApplicationInitializer;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
@@ -21,19 +20,8 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 @ComponentScan
 @EnableAutoConfiguration
 @Order(HIGHEST_PRECEDENCE)
-public class LightAdminBootApplication extends SpringBootServletInitializer {
+public class PhrobeBootApplication extends SpringBootServletInitializer {
 
-    /* Please uncomment for deploying as a web module to servlet container */
-    /**
-     * public void onStartup(ServletContext servletContext) throws ServletException {
-     * LightAdmin.configure(servletContext)
-     * .basePackage("org.lightadmin.boot.administration")
-     * .baseUrl("/admin")
-     * .security(false)
-     * .backToSiteUrl("http://lightadmin.org");
-     * super.onStartup(servletContext);
-     * }
-     */
 
     /* Used for running in "embedded" mode */
     @Bean
@@ -43,9 +31,8 @@ public class LightAdminBootApplication extends SpringBootServletInitializer {
             public void onStartup(ServletContext servletContext) throws ServletException {
                 LightAdmin.configure(servletContext)
                         .basePackage("com.bg.phrobe.lightadmin")
-                        .baseUrl("/admin")
-                        .security(false)
-                        .backToSiteUrl("http://lightadmin.org");;
+                        .baseUrl("/lightadmin")
+                        .security(false);
 
                 new LightAdminWebApplicationInitializer().onStartup(servletContext);
             }
@@ -53,11 +40,16 @@ public class LightAdminBootApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(LightAdminBootApplication.class, args);
+        SpringApplicationBuilder sAB = new SpringApplicationBuilder(
+                PhrobeBootApplication.class
+                , SpringSecurityConfigurer.class
+        );
+
+        sAB.run(args);
     }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(LightAdminBootApplication.class);
+        return application.sources(PhrobeBootApplication.class);
     }
 }

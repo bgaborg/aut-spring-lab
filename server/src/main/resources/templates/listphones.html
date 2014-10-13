@@ -28,11 +28,13 @@
     </thead>
     <tbody>
     <tr th:each="phone : ${phones}">
-        <td th:text="${phone?.api_key}">1</td>
-        <td th:text="${phone?.nickname}">John</td>
+        <td th:text="${phone?.api_key}"></td>
+        <td th:text="${phone?.nickname}"></td>
         <td><a th:href="@{'/notifyPhone'(apiKey=${phone.api_key})}">notify</a></td>
     </tr>
     </tbody>
 </table>
+
+<a th:href="@{/logout}" href="logout"> Logout </a>
 </body>
 </html>

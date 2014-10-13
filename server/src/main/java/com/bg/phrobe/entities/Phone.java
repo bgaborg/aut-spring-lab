@@ -18,6 +18,7 @@ public class Phone {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true)
     private String api_key;
 
     private String nickname;

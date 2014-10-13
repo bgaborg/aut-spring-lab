@@ -5,24 +5,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-/**
- * User
- */
+
 @Entity
-public class User {
+public class Authorities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String username;
-    private String password;
 
-    public User() {
+    private String username;
+    private String authority;
+
+    public Authorities() {
     }
 
-    public User(String u, String p) {
-        this.username = u;
-        this.password = p;
+    public Authorities(String username, String authority) {
+        this.username = username;
+        this.authority = authority;
     }
 
     public Long getId() {
@@ -41,21 +40,11 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getAuthority() {
+        return authority;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    // Getters and setters
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 }
