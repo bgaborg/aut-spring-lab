@@ -45,7 +45,7 @@ public class SpringSecurityConfigurer extends WebMvcConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
-                    .antMatchers("/resources/**").permitAll()
+                    .antMatchers("/**").permitAll()
                     .antMatchers("/lightadmin/**").hasRole("ADMIN")
 
                     .and().formLogin().loginPage("/login").failureUrl("/login?error").permitAll()

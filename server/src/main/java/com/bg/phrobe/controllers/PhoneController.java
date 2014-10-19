@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,9 +77,17 @@ public class PhoneController {
     @RequestMapping(value = "/notifyPhone")
     @ResponseBody
     public String notifyPhone(@RequestParam String apiKey, @RequestParam String msg) {
+        String serverIp = "not defined";
+        try {
+            serverIp = String.valueOf(InetAddress.getLocalHost());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         Sender sender = new Sender(PropertiesHolder.GCM_API_KEY);
         Message message = new Message.Builder()
                 .addData("message", msg)
+                .addData("serverIp", serverIp)
                 .build();
         try {
             final Result result = sender.send(message, apiKey, 5);

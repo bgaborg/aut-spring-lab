@@ -16,10 +16,6 @@ apply plugin: 'idea'
 group = 'com.bg.phrobe'
 version = '1.0'
 
-ext {
-    lightadminVersion = "1.1.0.BUILD-SNAPSHOT"
-}
-
 repositories {
     mavenCentral()
     maven { url "http://repo.spring.io/snapshot" }
@@ -40,7 +36,7 @@ dependencies {
 
     compile 'org.hsqldb:hsqldb:2.3.2'
 
-    compile "org.lightadmin:lightadmin:$lightadminVersion"
+    compile "org.lightadmin:lightadmin:1.1.0.BUILD-SNAPSHOT"
     compile 'org.apache.tomcat.embed:tomcat-embed-jasper:8.0.8'
 
     compile 'com.google.guava:guava:18.0'
@@ -51,8 +47,3 @@ dependencies {
         exclude(module: 'commons-logging')
     }
 }
-
-processResources {
-    expand(project.properties)
-}
-

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" ng-app="phrobe">
 <head>
     <title>Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+    <script src="js/lib/require.js" data-main="js/main"></script>
+
 </head>
 <body th:inline="text">
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -38,15 +39,21 @@
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">Dashboard - <span sec:authentication="name">Bob</span></h1>
+            <h1 class="page-header">Dashboard</h1>
+
+            <h3 class="sub-header">Display chart</h3>
+            <div ng-controller="chartController as cC" class="chartController controller">
+                <canvas id="myChart"></canvas>
+                <div>{{cC.message}}</div>
+            </div>
 
             <h3 class="sub-header">Set up data to send</h3>
 
             <form role="form">
                 <div class="form-group">
-                    <label for="sendMsg">Email address</label>
+                    <label for="sendMsg">Message</label>
                     <input type="email" class="form-control" id="sendMsg" placeholder="Enter email"
-                           value="Hello stuff"/>
+                           value="This text will be sent to the mobile."/>
                 </div>
 
             </form>
@@ -80,27 +87,4 @@
 </div>
 
 </body>
-
-<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script th:src="@{/js/bootstrap.min.js}"></script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    $("a.notifyPhone").on("click", function () {
-        var $self = $(this),
-                apiKey = $self.closest("tr").find("td.api-key").html(),
-                nickname = $self.closest("tr").find("td.nickname").html(),
-                msgToSend = $("#sendMsg").val();
-
-        $.ajax("/notifyPhone?apiKey=" + apiKey + "&" + "msg=" + msgToSend).always(function (data) {
-            var alert = $('<div class="alert alert-success alert-dismissible" role="alert">' +
-                    '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
-                    'Phone with ' + nickname + ' notified. (Received: ' + data + ')' +
-                    '</div>');
-            $('#alert-container').append(alert);
-        });
-
-        return false;
-    });
-    /*]]>*/
-</script>
 </html>
