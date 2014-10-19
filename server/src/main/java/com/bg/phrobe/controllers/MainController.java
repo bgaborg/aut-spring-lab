@@ -19,7 +19,7 @@ public class MainController {
         return "redirect:/dash";
     }
 
-    @RequestMapping("/test")
+    @RequestMapping("/phoneData")
     @ResponseBody
     List<Measurement> getMeasurements() {
         List<Measurement> measurements = new ArrayList<>();
@@ -31,6 +31,7 @@ public class MainController {
             m.setGpsAccuracy(rand.nextFloat() * 10);
             m.setSignalStrength(rand.nextFloat() * 10);
             m.setDate(new Date());
+            m.setId((long) i);
             measurements.add(m);
         }
 

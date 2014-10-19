@@ -43,8 +43,17 @@
 
             <h3 class="sub-header">Display chart</h3>
             <div ng-controller="chartController as cC" class="chartController controller">
-                <canvas id="myChart"></canvas>
+                <nvd3-line-chart
+                        data="cC.chartData"
+                        showXAxis="true"
+                        showYAxis="true"
+                        tooltips="true"
+                        interactive="true"
+                        height="400">
+                </nvd3-line-chart>
                 <div>{{cC.message}}</div>
+                <button ng-click="cC.displayDebug = !cC.displayDebug">Debug</button>
+                <pre ng-show="cC.displayDebug" class="ng-hide">{{cC.chartData | json}}</pre>
             </div>
 
             <h3 class="sub-header">Set up data to send</h3>
