@@ -1,5 +1,6 @@
 package com.bg.phrobe.controllers;
 
+import com.bg.phrobe.entities.Measurement;
 import com.bg.phrobe.entities.Phone;
 import com.bg.phrobe.repository.PhoneRepository;
 import com.bg.phrobe.repository.UserRepository;
@@ -10,9 +11,7 @@ import com.google.android.gcm.server.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
@@ -20,23 +19,39 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by bg
  */
 @Controller
+@RequestMapping("/phones")
 public class PhoneController {
-
-    List<String> messages = new ArrayList<>();
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
     PhoneRepository phoneRepository;
+
+    @RequestMapping(value = "/getMeasurements", method = RequestMethod.GET)
+    @ResponseBody
+    List<Measurement> getMeasurements() {
+        List<Measurement> measurements = new ArrayList<>();
+
+        Random rand = new Random();
+
+        for (int i = 0; i < 20; i++) {
+            Measurement m = new Measurement();
+            m.setGpsAccuracy(rand.nextFloat() * 10);
+            m.setSignalStrength(rand.nextFloat() * 10);
+            m.setDate(new Date());
+            m.setId((long) i);
+            measurements.add(m);
+        }
+
+        return measurements;
+    }
 
     @RequestMapping(value = "/addphone", params = {"api", "nick"})
     @ResponseBody
@@ -48,35 +63,26 @@ public class PhoneController {
     }
 
     @RequestMapping(value = "/addRandomPhone")
-    public ModelAndView addRandomPhone() {
+    @ResponseBody
+    public String addRandomPhone() {
         SecureRandom random = new SecureRandom();
         String api = new BigInteger(130, random).toString(32);
         String name = UUID.randomUUID().toString();
         Phone phone = new Phone(api, name);
         phoneRepository.save(phone);
 
-        messages.add("Random phone added: " + phone);
-        return listPhone();
+        return "Random phone added.";
     }
 
-    @RequestMapping(value = "/listphone")
-    public ModelAndView listPhone() {
-        ModelAndView mV = new ModelAndView();
-
-        List<Phone> phoneList = (List<Phone>) phoneRepository.findAll();
-        mV.addObject("phones", phoneList);
-
-        mV.addObject("messages", new ArrayList<>(messages));
-        messages.clear();
-
-        mV.setViewName("listphones");
-
-        return mV;
+    @RequestMapping(value = "/all")
+    @ResponseBody
+    public Iterable<Phone> getPhones() {
+        return phoneRepository.findAll();
     }
 
     @RequestMapping(value = "/notifyPhone")
     @ResponseBody
-    public String notifyPhone(@RequestParam String apiKey, @RequestParam String msg) {
+    public ServerRespose notifyPhone(@RequestParam String apiKey, @RequestParam String msg) {
         String serverIp = "not defined";
         try {
             serverIp = String.valueOf(InetAddress.getLocalHost());
@@ -91,13 +97,17 @@ public class PhoneController {
                 .build();
         try {
             final Result result = sender.send(message, apiKey, 5);
-
-            messages.add("Notification send result: " + result.toString());
         } catch (IOException e) {
             e.printStackTrace();
-            messages.add("Error during sending notification: " + e.getMessage());
         }
 
-        return "Phone notified";
+        return new ServerRespose("Phone notified");
+    }
+
+    public static class ServerRespose{
+        public String status;
+        ServerRespose(String status){
+            this.status = status;
+        }
     }
 }

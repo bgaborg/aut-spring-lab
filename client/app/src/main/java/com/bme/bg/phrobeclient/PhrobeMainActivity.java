@@ -185,7 +185,7 @@ public class PhrobeMainActivity extends Activity {
     private void sendRegistrationIdToBackend(String rId) {
         String deviceNick = URLEncoder.encode(getPhoneName());
 
-        String getUrl = backendUrl + "/addphone?api=" + rId + "&nick=" + deviceNick;
+        String getUrl = backendUrl + "/phones/addphone?api=" + rId + "&nick=" + deviceNick;
 
         String responseString;
 

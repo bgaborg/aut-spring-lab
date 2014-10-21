@@ -1,4 +1,4 @@
-package com.bg.phrobe;
+package com.bg.phrobe.conf;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.sql.DataSource;
 
+@Configuration
 @EnableWebSecurity
 public class SpringSecurityConfigurer extends WebMvcConfigurerAdapter {
 
@@ -49,20 +51,18 @@ public class SpringSecurityConfigurer extends WebMvcConfigurerAdapter {
                     .antMatchers("/lightadmin/**").hasRole("ADMIN")
 
                     .and().formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
-                    .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
+                    .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login")
+                    .and().csrf().disable();
         }
 
         PasswordEncoder sha256PasswordEncoder = new PasswordEncoder() {
             @Override
             public String encode(CharSequence rawPassword) {
-                logger.warn(rawPassword);
                 return Hashing.sha256().hashString(rawPassword, Charsets.UTF_8).toString();
             }
 
             @Override
             public boolean matches(CharSequence rawPassword, String encodedPassword) {
-                logger.warn("raw: " + rawPassword + " encoded: " + encodedPassword);
-
                 return encodedPassword.equals(Hashing.sha256().hashString(rawPassword, Charsets.UTF_8).toString());
             }
         };

@@ -18,6 +18,7 @@ version = '1.0'
 
 repositories {
     mavenCentral()
+    jcenter()
     maven { url "http://repo.spring.io/snapshot" }
     maven { url "http://lightadmin.org/nexus/content/repositories/releases" }
     maven { url "http://lightadmin.org/nexus/content/repositories/snapshots" }

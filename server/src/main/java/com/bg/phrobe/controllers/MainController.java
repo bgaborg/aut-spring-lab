@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,23 +21,31 @@ public class MainController {
         return "redirect:/dash";
     }
 
-    @RequestMapping("/phoneData")
+    @RequestMapping("/serverInfo")
     @ResponseBody
-    List<Measurement> getMeasurements() {
-        List<Measurement> measurements = new ArrayList<>();
+    ServerInfo getServerAddress() {
+        return new ServerInfo();
+    }
 
-        Random rand = new Random();
+    public static class ServerInfo {
+        public String serverIp;
 
-        for (int i = 0; i < 20; i++) {
-            Measurement m = new Measurement();
-            m.setGpsAccuracy(rand.nextFloat() * 10);
-            m.setSignalStrength(rand.nextFloat() * 10);
-            m.setDate(new Date());
-            m.setId((long) i);
-            measurements.add(m);
+        ServerInfo() {
+            this.serverIp = "not defined";
+            InetAddress[] allMyIps = null;
+            try {
+                InetAddress localhost = InetAddress.getLocalHost();
+                allMyIps = InetAddress.getAllByName(localhost.getCanonicalHostName());
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            if (allMyIps != null && allMyIps.length > 1) {
+                this.serverIp = "";
+                for(InetAddress ip : allMyIps){
+                    this.serverIp += ip.getHostAddress() + "; ";
+                }
+            }
         }
-
-        return measurements;
     }
 
 }

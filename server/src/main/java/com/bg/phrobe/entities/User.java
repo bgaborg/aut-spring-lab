@@ -6,7 +6,8 @@ import javax.persistence.*;
  * User
  */
 @Entity
-public class Users {
+@Table(name = "USERS")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,10 +18,10 @@ public class Users {
     private String password;
     private Boolean enabled;
 
-    public Users() {
+    public User() {
     }
 
-    public Users(String u, String p, Boolean e) {
+    public User(String u, String p, Boolean e) {
         this.username = u;
         this.password = p;
         this.enabled = e;

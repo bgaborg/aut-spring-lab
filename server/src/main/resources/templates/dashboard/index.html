@@ -6,15 +6,15 @@
     <script src="js/lib/require.js" data-main="js/main"></script>
 
 </head>
-<body th:inline="text">
+<body>
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
+                <span class="icon-bar">Abc</span>
+                <span class="icon-bar">Def</span>
+                <span class="icon-bar">Ghi</span>
             </button>
             <a class="navbar-brand" href="#">Phrobe</a>
         </div>
@@ -42,6 +42,7 @@
             <h1 class="page-header">Dashboard</h1>
 
             <h3 class="sub-header">Display chart</h3>
+
             <div ng-controller="chartController as cC" class="chartController controller">
                 <nvd3-line-chart
                         data="cC.chartData"
@@ -56,43 +57,50 @@
                 <pre ng-show="cC.displayDebug" class="ng-hide">{{cC.chartData | json}}</pre>
             </div>
 
-            <h3 class="sub-header">Set up data to send</h3>
+            <div ng-controller="phoneListController as pC">
+                <h2 class="sub-header">Phones</h2>
+                <h3 class="sub-header">Set up data to send</h3>
 
-            <form role="form">
-                <div class="form-group">
-                    <label for="sendMsg">Message</label>
-                    <input type="email" class="form-control" id="sendMsg" placeholder="Enter email"
-                           value="This text will be sent to the mobile."/>
+                <form role="form">
+                    <div class="form-group">
+                        <label for="sendMsg">Message</label>
+                        <input type="email" ng-value="pC.message" class="form-control" id="sendMsg"/>
+                    </div>
+                </form>
+
+                <div id="alert-container"></div>
+
+                <h3>Registered phones</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>api_key</th>
+                            <th>nickname</th>
+                            <th>actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="phone in pC.phones">
+                            <td>{{phone.id}}</td>
+                            <td class="api-key">{{phone.api_key}}</td>
+                            <td class="nickname">{{phone.nickname}}</td>
+                            <td><button ng-click="pC.sendMsg(phone.api_key)">Send msg</button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div>Status: {{pC.status}}</div>
                 </div>
+            </div>
 
-            </form>
-
-            <div id="alert-container"></div>
-
-            <h2 class="sub-header">Registered phones</h2>
-
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>api_key</th>
-                        <th>nickname</th>
-                        <th>actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="phone : ${phones}">
-                        <td th:text="${phone?.id}"></td>
-                        <td class="api-key" th:text="${phone?.api_key}"></td>
-                        <td class="nickname" th:text="${phone?.nickname}"></td>
-                        <td><a class="notifyPhone" href="#">notify</a></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div ng-controller="serverInfo as sI">
+                <h3 class="sub-header">Server info</h3>
+                {{sI.info | json}}
             </div>
         </div>
     </div>
+
 </div>
 
 </body>
