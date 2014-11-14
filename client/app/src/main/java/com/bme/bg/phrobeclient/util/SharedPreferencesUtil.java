@@ -9,9 +9,6 @@ import android.util.Log;
 
 import com.bme.bg.phrobeclient.PhrobeMainActivity;
 
-/**
- * Created by bg on 2014.10.17..
- */
 public class SharedPreferencesUtil {
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String TAG = SharedPreferencesUtil.class.getName();
@@ -71,7 +68,7 @@ public class SharedPreferencesUtil {
     /**
      * @return Application's {@code SharedPreferences}.
      */
-    private SharedPreferences getGcmPreferences(Context context) {
+    public SharedPreferences getGcmPreferences(Context context) {
         // This sample app persists the registration ID in shared preferences, but
         // how you store the regID in your app is up to you.
         return activity.getSharedPreferences(PhrobeMainActivity.class.getSimpleName(),

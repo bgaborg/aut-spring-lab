@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.TELEPHONY_SERVICE" />
 
     <permission android:name="com.example.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
@@ -37,6 +42,12 @@
             </intent-filter>
         </receiver>
         <service android:name=".GcmIntentService" />
+
+        <service
+            android:name="com.bme.bg.phrobeclient.RepeatingActionService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
 
     </application>
 

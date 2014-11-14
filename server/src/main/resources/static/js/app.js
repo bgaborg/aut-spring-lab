@@ -59,15 +59,16 @@ define(["jquery", "angular", "less!../css/dashboard.less", 'angularjs-nvd3-direc
 
         phrobeApp.controller('phoneListController', function ($http, $interval) {
             var pC = this;
-            pC.message = "This text will be sent to the mobile.";
+            pC.message = "Send update";
             pC.phones = [];
             pC.status = "Ready";
+            pC.serverIp = "http://192.168.1.103:8080";
 
             pC.sendMsg = function (api_key) {
                 $http({
                     url: '/phones/notifyPhone',
-                    method: "GET",
-                    params: {apiKey: api_key, msg: pC.message}
+                    method: "POST",
+                    params: {apiKey: api_key, msg: pC.message, serverIp: pC.serverIp}
                 }).success(function (data) {
                     pC.status = data.status;
                 });

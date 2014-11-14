@@ -3,6 +3,8 @@ package com.bme.bg.phrobeclient;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bme.bg.phrobeclient.util.SharedPreferencesUtil;
 import com.google.android.gms.common.ConnectionResult;
@@ -26,23 +29,26 @@ public class PhrobeMainActivity extends Activity {
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = PhrobeMainActivity.class.getName();
-    private String backendUrl = "http://192.168.1.105:8080";
     private final SharedPreferencesUtil sharedPreferencesUtil;
+    public static String PHROBE_BACKEND_URL_PROPERTY_REG_ID = "PHROBE_BACKEND_URL_PROPERTY";
+    public static String PHRROBE_BACKEND_URL_DEFAULT = "http://192.168.1.105:8080";
 
     /**
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
      */
     String SENDER_ID = "1007175536345";
-
     TextView mDisplay;
-    GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    Context context;
 
     String regid;
+    GoogleCloudMessaging gcm;
+    Context context;
+
+    private SharedPreferences prefs = null;
+
 
     EditText ipAddrIpText = null;
+    private String backendUrl = "";
 
     public PhrobeMainActivity() {
         sharedPreferencesUtil = new SharedPreferencesUtil(this);
@@ -54,11 +60,15 @@ public class PhrobeMainActivity extends Activity {
         setContentView(R.layout.activity_phrobe_main);
 
         mDisplay = (TextView) findViewById(R.id.display);
-
         ipAddrIpText = (EditText) findViewById(R.id.ip_address);
-        ipAddrIpText.setText(backendUrl, TextView.BufferType.EDITABLE);
+
 
         context = getApplicationContext();
+        prefs = sharedPreferencesUtil.getGcmPreferences(context);
+        backendUrl = prefs.getString(PHROBE_BACKEND_URL_PROPERTY_REG_ID, PHRROBE_BACKEND_URL_DEFAULT);
+        ipAddrIpText.setText(backendUrl, TextView.BufferType.EDITABLE);
+
+        prefs.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices()) {
@@ -77,6 +87,7 @@ public class PhrobeMainActivity extends Activity {
         // handle clicks by view id
         if(view.getId() == R.id.register_at_server){
             backendUrl = ipAddrIpText.getText().toString();
+            prefs.edit().putString(PHROBE_BACKEND_URL_PROPERTY_REG_ID, backendUrl).commit();
             sendRegistrationIdToBackend(regid);
         }
 
@@ -184,11 +195,7 @@ public class PhrobeMainActivity extends Activity {
      */
     private void sendRegistrationIdToBackend(String rId) {
         String deviceNick = URLEncoder.encode(getPhoneName());
-
         String getUrl = backendUrl + "/phones/addphone?api=" + rId + "&nick=" + deviceNick;
-
-        String responseString;
-
         new RequestTask().execute(getUrl);
     }
 
@@ -200,4 +207,25 @@ public class PhrobeMainActivity extends Activity {
         String deviceName = myDevice.getName();
         return deviceName;
     }
+
+    public void startService(View view) {
+        Toast.makeText(getApplicationContext(), "Starting service", Toast.LENGTH_LONG).show();
+        startService(new Intent(this, RepeatingActionService.class));
+    }
+
+    public void stopService(View view){
+        Toast.makeText(getApplicationContext(), "Stopping service", Toast.LENGTH_LONG).show();
+        stopService(new Intent(this, RepeatingActionService.class));
+    }
+
+    public SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if(key.equals(PHROBE_BACKEND_URL_PROPERTY_REG_ID)){
+                Log.i(TAG, key);
+                Log.i(TAG, sharedPreferences.getString(key, PHRROBE_BACKEND_URL_DEFAULT));
+                ipAddrIpText.setText(sharedPreferences.getString(key, PHRROBE_BACKEND_URL_DEFAULT));
+            }
+        }
+    };
 }

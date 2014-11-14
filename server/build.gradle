@@ -41,6 +41,8 @@ dependencies {
     compile 'org.apache.tomcat.embed:tomcat-embed-jasper:8.0.8'
 
     compile 'com.google.guava:guava:18.0'
+    compile 'commons-io:commons-io:2.4'
+
 
     compile 'com.ganyo:gcm-server:1.0.2'
 

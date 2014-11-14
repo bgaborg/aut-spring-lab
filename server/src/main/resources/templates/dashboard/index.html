@@ -63,8 +63,10 @@
 
                 <form role="form">
                     <div class="form-group">
-                        <label for="sendMsg">Message</label>
-                        <input type="email" ng-value="pC.message" class="form-control" id="sendMsg"/>
+                        <label for="sendMsg">message</label>
+                        <input type="text" ng-model="pC.message" class="form-control" id="sendMsg"/>
+                        <label for="serverIp">serverIp</label>
+                        <input type="text" ng-model="pC.serverIp" class="form-control" id="serverIp"/>
                     </div>
                 </form>
 

@@ -8,16 +8,15 @@ import com.bg.phrobe.util.PropertiesHolder;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -82,14 +81,8 @@ public class PhoneController {
 
     @RequestMapping(value = "/notifyPhone")
     @ResponseBody
-    public ServerRespose notifyPhone(@RequestParam String apiKey, @RequestParam String msg) {
-        String serverIp = "not defined";
-        try {
-            serverIp = String.valueOf(InetAddress.getLocalHost());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
+    public ServerRespose notifyPhone(@RequestParam String apiKey, @RequestParam String msg,
+                                     @RequestParam String serverIp) {
         Sender sender = new Sender(PropertiesHolder.GCM_API_KEY);
         Message message = new Message.Builder()
                 .addData("message", msg)
@@ -104,9 +97,17 @@ public class PhoneController {
         return new ServerRespose("Phone notified");
     }
 
-    public static class ServerRespose{
+    @RequestMapping(value = "/addMetrics", method = RequestMethod.POST)
+    @ResponseBody
+    public String addMetrics(HttpServletRequest request) throws IOException {
+        System.out.println(IOUtils.toString(request.getInputStream()));
+        return "data received";
+    }
+
+    public static class ServerRespose {
         public String status;
-        ServerRespose(String status){
+
+        ServerRespose(String status) {
             this.status = status;
         }
     }
