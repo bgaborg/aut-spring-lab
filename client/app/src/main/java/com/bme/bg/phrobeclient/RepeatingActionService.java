@@ -19,6 +19,9 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bme.bg.phrobeclient.entities.PhrobeDataObject;
+import com.bme.bg.phrobeclient.util.SharedPreferencesUtil;
+
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -47,6 +50,7 @@ public class RepeatingActionService extends Service {
     private int mId = 18433153; //Any unique number for this notification
     private int interval;
     String url = PhrobeMainActivity.PHRROBE_BACKEND_URL_DEFAULT;
+    String apiKey = "";
 
     @Override
     public void onCreate() {
@@ -64,6 +68,7 @@ public class RepeatingActionService extends Service {
 
         final SharedPreferences sharedPreferences = getSharedPreferences(PhrobeMainActivity.class.getSimpleName(), Context.MODE_PRIVATE);
         url = sharedPreferences.getString(PhrobeMainActivity.PHROBE_BACKEND_URL_PROPERTY_REG_ID, PhrobeMainActivity.PHRROBE_BACKEND_URL_DEFAULT) + "/phones/addMetrics";
+        apiKey = sharedPreferences.getString(PhrobeMainActivity.PROPERTY_REG_ID, "");
 
         showNotification();
         handler.postDelayed(runnable, 0);
@@ -115,6 +120,7 @@ public class RepeatingActionService extends Service {
                 // for example value of first element
                 phrobeDataObject.timestamp = new Date().getTime();
                 phrobeDataObject.interval = interval;
+                phrobeDataObject.apiKey = apiKey;
 
                 RestTemplate restTemplate = new RestTemplate();
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -135,33 +141,30 @@ public class RepeatingActionService extends Service {
     }
 
     /**
-     * Data object to send
-     */
-    public static class PhrobeDataObject {
-        public long timestamp = 0;
-        public int interval = 0;
-        public Location location = null;
-        public SignalStrength signalStrength = null;
-
-        PhrobeDataObject() {
-        }
-    }
-
-    /**
      * SignalStrength listener
      */
     private class GetSignalStrength extends PhoneStateListener {
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
-            phrobeDataObject.signalStrength = signalStrength;
+            phrobeDataObject.signalStrength.dbm = signalStrength.getCdmaDbm();
+            phrobeDataObject.signalStrength.signalStrength = signalStrength.getGsmSignalStrength();
         }
     }
 
     private class GetGpsStrength implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-            phrobeDataObject.location = location;
+            phrobeDataObject.location.accuracy = location.getAccuracy();
+            phrobeDataObject.location.altitude = location.getAltitude();
+            phrobeDataObject.location.bearing = location.getBearing();
+            phrobeDataObject.location.elapsedRealtimeNanos = location.getElapsedRealtimeNanos();
+            phrobeDataObject.location.latitude = location.getLatitude();
+            phrobeDataObject.location.longitude = location.getLongitude();
+            phrobeDataObject.location.accuracy = location.getAccuracy();
+            phrobeDataObject.location.provider = location.getProvider();
+            phrobeDataObject.location.speed = location.getSpeed();
+            phrobeDataObject.location.time = location.getTime();
         }
 
         @Override

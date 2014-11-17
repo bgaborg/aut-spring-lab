@@ -1,20 +1,22 @@
 package com.bg.phrobe.controllers;
 
+import com.bg.phrobe.entities.PhrobeDataObject;
 import com.bg.phrobe.entities.Measurement;
 import com.bg.phrobe.entities.Phone;
 import com.bg.phrobe.repository.PhoneRepository;
+import com.bg.phrobe.repository.PhrobeDataObjectRepository;
 import com.bg.phrobe.repository.UserRepository;
+import com.bg.phrobe.util.ListWrapper;
 import com.bg.phrobe.util.PropertiesHolder;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -26,6 +28,9 @@ import java.util.*;
 @Controller
 @RequestMapping("/phones")
 public class PhoneController {
+
+    @Autowired
+    PhrobeDataObjectRepository phrobeDataObjectRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -97,11 +102,21 @@ public class PhoneController {
         return new ServerRespose("Phone notified");
     }
 
-    @RequestMapping(value = "/addMetrics", method = RequestMethod.POST)
+    @RequestMapping(value = "/getPhrobeData", method = RequestMethod.GET)
     @ResponseBody
-    public String addMetrics(HttpServletRequest request) throws IOException {
-        System.out.println(IOUtils.toString(request.getInputStream()));
-        return "data received";
+    ListWrapper<PhrobeDataObject> getPhrobeData(@RequestParam String apiKey) {
+        ListWrapper<PhrobeDataObject> listWrapper = new ListWrapper<>();
+        Pageable pageable = new PageRequest(0, 100);
+        listWrapper.list = phrobeDataObjectRepository.findByApiKey(apiKey, pageable);
+        return listWrapper;
+    }
+
+    @RequestMapping(value = "/addMetrics", method = RequestMethod.POST, produces = "text/plain")
+    @ResponseBody
+    public String addMetrics(@RequestBody PhrobeDataObject phrobeDataObject) throws IOException {
+        System.out.println(phrobeDataObject);
+        phrobeDataObjectRepository.save(phrobeDataObject);
+        return "data saved";
     }
 
     public static class ServerRespose {

@@ -32,6 +32,8 @@ public class PhrobeMainActivity extends Activity {
     private final SharedPreferencesUtil sharedPreferencesUtil;
     public static String PHROBE_BACKEND_URL_PROPERTY_REG_ID = "PHROBE_BACKEND_URL_PROPERTY";
     public static String PHRROBE_BACKEND_URL_DEFAULT = "http://192.168.1.105:8080";
+    public static final String PROPERTY_REG_ID = "registration_id";
+    public static final String PROPERTY_APP_VERSION = "0.1m";
 
     /**
      * Substitute you own sender ID here. This is the project number you got
@@ -210,7 +212,8 @@ public class PhrobeMainActivity extends Activity {
 
     public void startService(View view) {
         Toast.makeText(getApplicationContext(), "Starting service", Toast.LENGTH_LONG).show();
-        startService(new Intent(this, RepeatingActionService.class));
+        Intent intent = new Intent(this, RepeatingActionService.class);
+        startService(intent);
     }
 
     public void stopService(View view){
@@ -228,4 +231,5 @@ public class PhrobeMainActivity extends Activity {
             }
         }
     };
+
 }
