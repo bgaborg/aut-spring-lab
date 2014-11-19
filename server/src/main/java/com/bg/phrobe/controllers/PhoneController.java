@@ -1,7 +1,7 @@
 package com.bg.phrobe.controllers;
 
+import com.bg.phrobe.dto.StatsDto;
 import com.bg.phrobe.entities.PhrobeDataObject;
-import com.bg.phrobe.entities.Measurement;
 import com.bg.phrobe.entities.Phone;
 import com.bg.phrobe.repository.PhoneRepository;
 import com.bg.phrobe.repository.PhrobeDataObjectRepository;
@@ -40,21 +40,23 @@ public class PhoneController {
 
     @RequestMapping(value = "/getMeasurements", method = RequestMethod.GET)
     @ResponseBody
-    List<Measurement> getMeasurements() {
-        List<Measurement> measurements = new ArrayList<>();
+    StatsDto getMeasurements() {
+        StatsDto statsDto = new StatsDto();
+        StatsDto.Nv3Displayable<Float> signalStrength = new StatsDto.Nv3Displayable<>();
+        signalStrength.key = "signalStrength";
+        StatsDto.Nv3Displayable<Float> gpsAccuracy = new StatsDto.Nv3Displayable<>();
+        gpsAccuracy.key = "gpsAccuracy";
+
+        statsDto.stats.add(signalStrength);
+        statsDto.stats.add(gpsAccuracy);
 
         Random rand = new Random();
-
         for (int i = 0; i < 20; i++) {
-            Measurement m = new Measurement();
-            m.setGpsAccuracy(rand.nextFloat() * 10);
-            m.setSignalStrength(rand.nextFloat() * 10);
-            m.setDate(new Date());
-            m.setId((long) i);
-            measurements.add(m);
+            signalStrength.values.add(rand.nextFloat() * 10);
+            gpsAccuracy.values.add(rand.nextFloat() * 10);
         }
 
-        return measurements;
+        return statsDto;
     }
 
     @RequestMapping(value = "/addphone", params = {"api", "nick"})

@@ -20,25 +20,14 @@ define(["jquery", "angular", "less!../css/dashboard.less", 'angularjs-nvd3-direc
             cC.refreshChartData = function () {
                 console.log("Update data...")
                 $http.get('/phones/getMeasurements').success(function (data) {
-                    var reportData = [
-                        {
-                            "key": "signalStrength",
-                            "values": [
-                            ]
-                        },
-                        {
-                            "key": "gpsAccuracy",
-                            "values": [
-                            ]
+                    // must have transformation.
+                    for (var i = 0; i < data.stats.length; i++) {
+                        for ( var j = 0; j < data.stats[i].values.length; j++){
+                            data.stats[i].values[j] = [j, data.stats[i].values[j]];
                         }
-                    ];
-
-                    for (var i = 0; i < data.length; i++) {
-                        reportData[0].values.push([data[i].id, data[i].signalStrength]);
-                        reportData[1].values.push([data[i].id, data[i].gpsAccuracy]);
                     }
-
-                    cC.chartData = reportData;
+                    cC.chartData = data.stats;
+                    console.log(data.stats);
                     console.log("Data updated.")
                 });
             };
