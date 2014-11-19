@@ -64,7 +64,7 @@ public class RepeatingActionService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
 
-        interval = intent.getIntExtra("interval", 10000);
+        interval = intent.getIntExtra("interval", 5000);
 
         final SharedPreferences sharedPreferences = getSharedPreferences(PhrobeMainActivity.class.getSimpleName(), Context.MODE_PRIVATE);
         url = sharedPreferences.getString(PhrobeMainActivity.PHROBE_BACKEND_URL_PROPERTY_REG_ID, PhrobeMainActivity.PHRROBE_BACKEND_URL_DEFAULT) + "/phones/addMetrics";

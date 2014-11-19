@@ -42,18 +42,30 @@ public class PhoneController {
     @ResponseBody
     StatsDto getMeasurements() {
         StatsDto statsDto = new StatsDto();
-        StatsDto.Nv3Displayable<Float> signalStrength = new StatsDto.Nv3Displayable<>();
+        StatsDto.Nv3Displayable<Integer> signalStrength = new StatsDto.Nv3Displayable<>();
         signalStrength.key = "signalStrength";
-        StatsDto.Nv3Displayable<Float> gpsAccuracy = new StatsDto.Nv3Displayable<>();
+        StatsDto.Nv3Displayable<Double> gpsAccuracy = new StatsDto.Nv3Displayable<>();
         gpsAccuracy.key = "gpsAccuracy";
 
         statsDto.stats.add(signalStrength);
         statsDto.stats.add(gpsAccuracy);
 
+        List<Phone> phones = (List<Phone>) phoneRepository.findAll();
+        // if there are no phones, return null
+        if(phones.size() == 0){
+            return statsDto;
+        }
+
+        Pageable pageable = new PageRequest(0, 100);
+        Phone phone = phones.get(0);
+        List<PhrobeDataObject> phrobeDataObjects = phrobeDataObjectRepository.findByApiKey(phone.getApi_key(), pageable);
+
         Random rand = new Random();
-        for (int i = 0; i < 20; i++) {
-            signalStrength.values.add(rand.nextFloat() * 10);
-            gpsAccuracy.values.add(rand.nextFloat() * 10);
+        for (PhrobeDataObject pDO : phrobeDataObjects) {
+            signalStrength.values.add(pDO.signalStrength.signalStrength * 100);
+            signalStrength.dates.add(new Date(pDO.timestamp));
+            gpsAccuracy.values.add(pDO.location.accuracy);
+            gpsAccuracy.dates.add(new Date(pDO.timestamp));
         }
 
         return statsDto;

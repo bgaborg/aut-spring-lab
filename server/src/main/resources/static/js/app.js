@@ -20,15 +20,20 @@ define(["jquery", "angular", "less!../css/dashboard.less", 'angularjs-nvd3-direc
             cC.refreshChartData = function () {
                 console.log("Update data...")
                 $http.get('/phones/getMeasurements').success(function (data) {
-                    // must have transformation.
+                    // must have transformation - for d3. this transformation is easier than in java side
                     for (var i = 0; i < data.stats.length; i++) {
-                        for ( var j = 0; j < data.stats[i].values.length; j++){
-                            data.stats[i].values[j] = [j, data.stats[i].values[j]];
+                        // we should reverse, because the data will be in descending order by date
+                        //data.stats[i].values.reverse();
+                        for (var j = 0; j < data.stats[i].values.length; j++) {
+                            if (data.stats[i].dates === undefined || j > data.stats[i].dates.length) {
+                                data.stats[i].values[j] = [j, data.stats[i].values[j]];
+                            }else{
+                                data.stats[i].values[j] = [new Date(data.stats[i].dates[j]), data.stats[i].values[j]];
+                            }
                         }
                     }
                     cC.chartData = data.stats;
-                    console.log(data.stats);
-                    console.log("Data updated.")
+                    console.log("Data updated.");
                 });
             };
 
