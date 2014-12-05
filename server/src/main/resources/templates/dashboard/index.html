@@ -2,9 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" ng-app="phrobe">
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <script src="js/lib/require.js" data-main="js/main"></script>
-
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -31,79 +29,30 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-                <li class="active"><a href="#">Overview</a></li>
-                <!--li><a href="#">Reports</a></li>
-                <li><a href="#">Analytics</a></li>
+            <ul class="nav nav-sidebar" ng-controller="menuController as mC">
+                <li ng-class="mC.getClass('/main')"><a href="#">Overview</a></li>
+                <li ng-class="mC.getClass('/details')"><a href="#">Details</a></li>
+                <!--li><a href="#">Analytics</a></li>
                 <li><a href="#">Export</a></li-->
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Dashboard</h1>
 
-            <h3 class="sub-header">Display chart</h3>
+            <div id="alert-container"></div>
 
-            <div ng-controller="chartController as cC" class="chartController controller">
-                <nvd3-line-chart
-                        data="cC.chartData"
-                        showXAxis="true"
-                        showYAxis="true"
-                        tooltips="true"
-                        interactive="true"
-                        height="400">
-                </nvd3-line-chart>
-                <div>{{cC.message}}</div>
-                <button ng-click="cC.displayDebug = !cC.displayDebug">Debug</button>
-                <pre ng-show="cC.displayDebug" class="ng-hide">{{cC.chartData | json}}</pre>
-            </div>
-
-            <div ng-controller="phoneListController as pC">
-                <h2 class="sub-header">Phones</h2>
-                <h3 class="sub-header">Set up data to send</h3>
-
-                <form role="form">
-                    <div class="form-group">
-                        <label for="sendMsg">message</label>
-                        <input type="text" ng-model="pC.message" class="form-control" id="sendMsg"/>
-                        <label for="serverIp">serverIp</label>
-                        <input type="text" ng-model="pC.serverIp" class="form-control" id="serverIp"/>
-                    </div>
-                </form>
-
-                <div id="alert-container"></div>
-
-                <h3>Registered phones</h3>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>api_key</th>
-                            <th>nickname</th>
-                            <th>actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="phone in pC.phones">
-                            <td>{{phone.id}}</td>
-                            <td class="api-key">{{phone.api_key}}</td>
-                            <td class="nickname">{{phone.nickname}}</td>
-                            <td><button ng-click="pC.sendMsg(phone.api_key)">Send msg</button></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div>Status: {{pC.status}}</div>
-                </div>
-            </div>
+            <div ng-view=""></div>
 
             <div ng-controller="serverInfo as sI">
                 <h3 class="sub-header">Server info</h3>
                 {{sI.info | json}}
             </div>
         </div>
-    </div>
 
+
+    </div>
 </div>
+
 
 </body>
 </html>

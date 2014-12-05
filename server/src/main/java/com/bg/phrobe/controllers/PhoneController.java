@@ -38,9 +38,9 @@ public class PhoneController {
     @Autowired
     PhoneRepository phoneRepository;
 
-    @RequestMapping(value = "/getMeasurements", method = RequestMethod.GET)
+    @RequestMapping(value = "/getMeasurements/{id}", method = RequestMethod.GET)
     @ResponseBody
-    StatsDto getMeasurements() {
+    StatsDto getMeasurements(@PathVariable Long id) {
         StatsDto statsDto = new StatsDto();
         StatsDto.Nv3Displayable<Integer> signalStrength = new StatsDto.Nv3Displayable<>();
         signalStrength.key = "signalStrength";
@@ -50,17 +50,14 @@ public class PhoneController {
         statsDto.stats.add(signalStrength);
         statsDto.stats.add(gpsAccuracy);
 
-        List<Phone> phones = (List<Phone>) phoneRepository.findAll();
-        // if there are no phones, return null
-        if(phones.size() == 0){
-            return statsDto;
-        }
 
         Pageable pageable = new PageRequest(0, 100);
-        Phone phone = phones.get(0);
+        Phone phone = phoneRepository.findOne(id);
+        if (phone == null) {
+            return statsDto;
+        }
         List<PhrobeDataObject> phrobeDataObjects = phrobeDataObjectRepository.findByApiKey(phone.getApi_key(), pageable);
 
-        Random rand = new Random();
         for (PhrobeDataObject pDO : phrobeDataObjects) {
             signalStrength.values.add(pDO.signalStrength.signalStrength * 100);
             signalStrength.dates.add(new Date(pDO.timestamp));
@@ -131,6 +128,12 @@ public class PhoneController {
         System.out.println(phrobeDataObject);
         phrobeDataObjectRepository.save(phrobeDataObject);
         return "data saved";
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Phone getPhoneById(@PathVariable Long id) {
+        return phoneRepository.findOne(id);
     }
 
     public static class ServerRespose {

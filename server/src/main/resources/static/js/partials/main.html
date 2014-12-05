@@ -1,0 +1,28 @@
+<h3>Registered phones</h3>
+
+<div ng-controller="phoneListController as pC">
+    <h2 class="sub-header">Phones</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>api_key</th>
+                <th>nickname</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="phone in pC.phones">
+
+                <td><a href="#/details/{{phone.id}}">{{phone.id}}</a></td>
+                <td class="api-key">{{phone.api_key}}</td>
+                <td class="nickname">{{phone.nickname}}</td>
+                <td class=""><a class="btn btn-info" href="#/details/{{phone.id}}">Details</a></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>Status: {{pC.status}}</div>
+    </div>
+</div>

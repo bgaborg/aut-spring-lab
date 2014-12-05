@@ -6,9 +6,8 @@ requirejs.config({
         text: 'lib/text',
         d3: 'lib/d3.min',
         'nvd3': 'lib/nv.d3.min',
-        'angularjs-nvd3-directives': 'lib/angularjs-nvd3-directives.min'
-
-
+        'angularjs-nvd3-directives': 'lib/angularjs-nvd3-directives.min',
+        'angularRoute': 'lib/angular-route.min'
     },
 
     shim: {
@@ -19,6 +18,10 @@ requirejs.config({
         },
         'angularjs-nvd3-directives': {
             deps: ['nvd3']
+        },
+        'angularRoute': ['angular'],
+        bootstrap: {
+            deps: ["less!../css/dashboard.less", "css!../css/bootstrap.min"]
         }
     },
 
@@ -38,7 +41,9 @@ window.name = "NG_DEFER_BOOTSTRAP!";
 
 require([
     'angular',
-    'app'
+    'app',
+    'angularRoute',
+    'bootstrap'
 ], function (angular, App) {
     var $html = angular.element(document.getElementsByTagName('html')[0]);
 
