@@ -9,11 +9,18 @@
             showYAxis="true"
             tooltips="true"
             interactive="true"
+            xAxisTickFormat="cC.xAxisTickFormatFunction()"
             height="400">
     </nvd3-line-chart>
     <div>{{cC.message}}</div>
     <button ng-click="cC.displayDebug = !cC.displayDebug">Debug</button>
     <pre ng-show="cC.displayDebug" class="ng-hide">{{cC.chartData | json}}</pre>
+
+    <h3 class="sub-header">Position on map</h3>
+    <ui-gmap-google-map center='cC.map.center' zoom='cC.map.zoom' draggable="false" options="cC.map.options">
+        <ui-gmap-marker coords="cC.map.center" options="cC.map.marker" idkey="cC.map.markerId">
+        </ui-gmap-marker>
+    </ui-gmap-google-map>
 
     <h3 class="sub-header">Set up data to send</h3>
 

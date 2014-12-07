@@ -1,7 +1,7 @@
-define(["jquery", "angular", 'angularjs-nvd3-directives'],
+define(["jquery", "angular", 'angularjs-nvd3-directives', 'angular-google-maps'],
     function ($, angular) {
         var self = this;
-        var phrobeApp = angular.module('phrobe', ['nvd3ChartDirectives', 'ngRoute']);
+        var phrobeApp = angular.module('phrobe', ['nvd3ChartDirectives', 'ngRoute', 'uiGmapgoogle-maps']);
 
         phrobeApp.controller('serverInfo', function ($http) {
             var sI = this;
@@ -45,8 +45,21 @@ define(["jquery", "angular", 'angularjs-nvd3-directives'],
 
             var cC = this;
             cC.message = "Ready";
-            cC.chartData = [ ];
+            cC.chartData = [];
             cC.displayDebug = false;
+
+            cC.map = {
+                center: {latitude: 47.515707, longitude: 19.107288},
+                zoom: 16,
+                marker: {
+                    draggable: true,
+                    labelContent: "Location",
+                    labelAnchor: "100 0",
+                    labelClass: "marker-labels"
+                },
+                options: {scrollwheel: false},
+                markerId: "PhoneLocation"
+            };
 
             cC.serverIp = "http://192.168.1.103:8080";
 
@@ -59,6 +72,12 @@ define(["jquery", "angular", 'angularjs-nvd3-directives'],
                     cC.message = 'Update sent';
                 });
             };
+
+            cC.xAxisTickFormatFunction = function () {
+                return function (d) {
+                    return d3.time.format('%x')(new Date(d));
+                }
+            }
 
             cC.refreshChartData = function () {
                 console.log("Update data...")
@@ -110,4 +129,5 @@ define(["jquery", "angular", 'angularjs-nvd3-directives'],
 
 
         return phrobeApp;
-    });
+    })
+;
