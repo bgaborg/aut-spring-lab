@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.Position;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -38,6 +39,34 @@ public class PhoneController {
     @Autowired
     PhoneRepository phoneRepository;
 
+    public static class Position{
+        public double latitude = 0;
+        public double longitude = 0;
+        public Date date = new Date();
+
+        public Position(double latitude, double longitude, Date date) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.date = date;
+        }
+    }
+
+    @RequestMapping(value = "/getPositions/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    List<Position> getPositions(@PathVariable Long id) {
+        List<Position> positions = new ArrayList<>();
+        Phone phone = phoneRepository.findOne(id);
+        Pageable pageable = new PageRequest(0, 1);
+        List<PhrobeDataObject> phrobeDataObjects = phrobeDataObjectRepository.findByApiKey(phone.getApi_key(), pageable);
+
+        for(PhrobeDataObject pdo : phrobeDataObjects){
+            positions.add(new Position(pdo.location.latitude, pdo.location.longitude, new Date(pdo.timestamp)));
+        }
+
+        return positions;
+    }
+
+
     @RequestMapping(value = "/getMeasurements/{id}", method = RequestMethod.GET)
     @ResponseBody
     StatsDto getMeasurements(@PathVariable Long id) {
@@ -50,7 +79,6 @@ public class PhoneController {
         statsDto.stats.add(signalStrength);
         statsDto.stats.add(gpsAccuracy);
 
-
         Pageable pageable = new PageRequest(0, 100);
         Phone phone = phoneRepository.findOne(id);
         if (phone == null) {
@@ -59,11 +87,11 @@ public class PhoneController {
         List<PhrobeDataObject> phrobeDataObjects = phrobeDataObjectRepository.findByApiKey(phone.getApi_key(), pageable);
 
         for (PhrobeDataObject pDO : phrobeDataObjects) {
-            signalStrength.values.add(pDO.signalStrength.signalStrength * 100);
+            signalStrength.values.add(pDO.signalStrength.signalStrength*10);
             signalStrength.dates.add(new Date(pDO.timestamp));
             gpsAccuracy.values.add(pDO.location.accuracy);
             gpsAccuracy.dates.add(new Date(pDO.timestamp));
-        }
+    }
 
         return statsDto;
     }
@@ -143,4 +171,6 @@ public class PhoneController {
             this.status = status;
         }
     }
+
+
 }

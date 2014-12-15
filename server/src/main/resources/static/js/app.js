@@ -48,8 +48,15 @@ define(["jquery", "angular", 'angularjs-nvd3-directives', 'angular-google-maps']
             cC.chartData = [];
             cC.displayDebug = false;
 
+            var updateMap = function (lat, lng) {
+                cC.map.center.latitude = cC.map.markerPosition.latitude = lat;
+                cC.map.center.longitude = cC.map.markerPosition.longitude = lng;
+            };
+
+
             cC.map = {
-                center: {latitude: 47.515707, longitude: 19.107288},
+                center: {latitude: 0, longitude: 0},
+                markerPosition: {latitude: 0, longitude: 0},
                 zoom: 16,
                 marker: {
                     draggable: true,
@@ -75,7 +82,7 @@ define(["jquery", "angular", 'angularjs-nvd3-directives', 'angular-google-maps']
 
             cC.xAxisTickFormatFunction = function () {
                 return function (d) {
-                    return d3.time.format('%x')(new Date(d));
+                    return d3.time.format('%X')(new Date(d));
                 }
             }
 
@@ -97,6 +104,13 @@ define(["jquery", "angular", 'angularjs-nvd3-directives', 'angular-google-maps']
                     cC.chartData = data.stats;
                     console.log("Data updated.");
                 });
+
+                $http.get('/phones/getPositions/' + $routeParams.phoneId).success(function (data) {
+                    if (data !== undefined) {
+                        updateMap(data[0].latitude, data[0].longitude);
+                    }
+                });
+
             };
 
             var refreshChartDataInterval = $interval(cC.refreshChartData, 5000);
